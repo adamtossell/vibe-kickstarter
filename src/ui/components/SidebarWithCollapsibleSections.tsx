@@ -144,13 +144,18 @@ const SidebarWithCollapsibleSectionsRoot = React.forwardRef<
       ref={ref as any}
       {...otherProps}
     >
+      <div className="flex h-14 w-full flex-none flex-col items-start justify-center px-4 py-4">
+        <span className="text-body-bold font-body-bold text-default-font">
+          Vibe kickstarter
+        </span>
+      </div>
       {children ? (
-        <div className="flex w-full grow shrink-0 basis-0 flex-col items-start gap-6 px-4 py-4 overflow-auto">
+        <div className="flex w-full grow shrink-0 basis-0 flex-col items-start gap-2 px-4 py-4 overflow-auto">
           {children}
         </div>
       ) : null}
       {footer ? (
-        <div className="flex w-full flex-col items-start justify-end gap-2 px-4 py-4">
+        <div className="flex w-full flex-col items-start justify-end gap-2">
           {footer}
         </div>
       ) : null}

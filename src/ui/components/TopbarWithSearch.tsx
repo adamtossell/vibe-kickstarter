@@ -62,7 +62,7 @@ const TopbarWithSearchRoot = React.forwardRef<
   return (
     <nav
       className={SubframeUtils.twClassNames(
-        "flex h-12 w-full items-center gap-4",
+        "flex h-14 w-full items-center gap-4 px-4 py-4",
         className
       )}
       ref={ref as any}

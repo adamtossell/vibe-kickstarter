@@ -8,7 +8,6 @@
 
 import React from "react";
 import * as SubframeUtils from "../utils";
-import { FeatherSidebar } from "@subframe/core";
 import { SidebarWithCollapsibleSections } from "../components/SidebarWithCollapsibleSections";
 import { FeatherCircle } from "@subframe/core";
 import { Button } from "../components/Button";
@@ -47,12 +46,6 @@ const DefaultPageLayoutRoot = React.forwardRef<
           </div>
         }
       >
-        <div className="flex h-12 w-full flex-none items-center gap-6">
-          <span className="grow shrink-0 basis-0 text-body-bold font-body-bold text-default-font">
-            Vibe Starter
-          </span>
-          <FeatherSidebar className="text-body font-body text-default-font" />
-        </div>
         <SidebarWithCollapsibleSections.NavSection label="Type">
           <SidebarWithCollapsibleSections.NavItem icon={<FeatherCircle />}>
             Repo
@@ -220,7 +213,7 @@ const DefaultPageLayoutRoot = React.forwardRef<
         </SidebarWithCollapsibleSections.NavSection>
       </SidebarWithCollapsibleSections>
       {children ? (
-        <div className="flex grow shrink-0 basis-0 flex-col items-start gap-6 self-stretch overflow-y-auto bg-default-background px-4 py-4">
+        <div className="flex grow shrink-0 basis-0 flex-col items-start gap-6 self-stretch overflow-y-auto bg-default-background">
           {children}
         </div>
       ) : null}
