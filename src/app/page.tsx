@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useMemo } from "react";
 import { DefaultPageLayout } from "@/ui/layouts/DefaultPageLayout";
 import { TextField } from "@/ui/components/TextField";
 import { Button } from "@/ui/components/Button";
@@ -26,8 +26,12 @@ import {
 } from "@subframe/core";
 import Image from "next/image";
 
+// Define the possible sort options
+type SortOption = "Popular" | "Latest" | "Featured" | "Name A-Z" | "Name Z-A";
+
 function Home() {
   const [searchQuery, setSearchQuery] = useState("");
+  const [sortCriteria, setSortCriteria] = useState<SortOption>("Popular"); // Default sort criteria
 
   const allCards = [
     {
@@ -109,14 +113,53 @@ function Home() {
     }
   ];
 
-  const filteredCards = allCards.filter(card => {
-    const searchLower = searchQuery.toLowerCase();
-    return (
-      card.title.toLowerCase().includes(searchLower) ||
-      card.subtext.toLowerCase().includes(searchLower) ||
-      card.tags.some(tag => tag.toLowerCase().includes(searchLower))
-    );
-  });
+  const filteredCards = useMemo(() => {
+    return allCards.filter(card => {
+      const searchLower = searchQuery.toLowerCase();
+      return (
+        card.title.toLowerCase().includes(searchLower) ||
+        card.subtext.toLowerCase().includes(searchLower) ||
+        card.tags.some(tag => tag.toLowerCase().includes(searchLower))
+      );
+    });
+  }, [searchQuery, allCards]);
+
+  const sortedAndFilteredCards = useMemo(() => {
+    const cardsToSort = [...filteredCards]; // Create a mutable copy
+
+    switch (sortCriteria) {
+      case "Name A-Z":
+        cardsToSort.sort((a, b) => a.title.localeCompare(b.title));
+        break;
+      case "Name Z-A":
+        cardsToSort.sort((a, b) => b.title.localeCompare(a.title));
+        break;
+      case "Featured":
+        // Sort featured items first, then alphabetically by title
+        cardsToSort.sort((a, b) => {
+          if (a.featured && !b.featured) return -1;
+          if (!a.featured && b.featured) return 1;
+          return a.title.localeCompare(b.title); // Secondary sort by name
+        });
+        break;
+      // Placeholder logic for Popular and Latest as data is missing
+      case "Popular":
+         // Example: Treat featured as popular for now
+         cardsToSort.sort((a, b) => {
+          if (a.featured && !b.featured) return -1;
+          if (!a.featured && b.featured) return 1;
+          return a.title.localeCompare(b.title); 
+        });
+        break;
+      case "Latest":
+        // No date info, keep the filtered order (or implement date logic if available)
+        break; 
+      default:
+        // Default to Name A-Z if criteria is unknown
+        cardsToSort.sort((a, b) => a.title.localeCompare(b.title));
+    }
+    return cardsToSort;
+  }, [filteredCards, sortCriteria]);
 
   return (
     <DefaultPageLayout>
@@ -205,8 +248,8 @@ function Home() {
                 placeholder="Sort"
                 helpText=""
                 icon={null}
-                value={undefined}
-                onValueChange={(value: string) => {}}
+                value={sortCriteria}
+                onValueChange={(value: string) => setSortCriteria(value as SortOption)}
               >
                 <Select.Item value="Popular">Popular</Select.Item>
                 <Select.Item value="Latest">Latest</Select.Item>
@@ -216,7 +259,7 @@ function Home() {
               </Select>
             </div>
             <div className="grid w-full grid-cols-3 gap-4">
-              {filteredCards.map((card, index) => (
+              {sortedAndFilteredCards.map((card, index) => (
                 <StarterCard
                   key={index}
                   image={card.image}
@@ -268,7 +311,7 @@ function Home() {
               ))}
             </div>
           </div>
-          {filteredCards.length === 0 && (
+          {sortedAndFilteredCards.length === 0 && (
             <div className="flex w-full flex-col items-center gap-6 rounded-lg border border-solid border-neutral-100 bg-neutral-50 px-8 py-8 shadow-sm">
               <div className="flex w-full flex-col items-center gap-4">
                 <div className="flex h-10 w-10 flex-none items-center justify-center gap-2 rounded-full border border-solid border-neutral-200 bg-default-background shadow-sm">
